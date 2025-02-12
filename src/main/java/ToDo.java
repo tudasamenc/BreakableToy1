@@ -4,6 +4,4 @@ public class ToDo {
     int Priority;
     int ddate;
     boolean done;
-    
-    boolean
 }
