@@ -1,7 +1,7 @@
-package com.example.demo.Task;
+package BreakableToy.Task;
 import java.time.LocalDateTime;
 
-public record Taskk(
+public record TaskClass(
         Integer id,
         String Name,
         boolean Done,

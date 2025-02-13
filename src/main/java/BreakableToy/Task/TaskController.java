@@ -1,4 +1,4 @@
-package com.example.demo.Task;
+package BreakableToy.Task;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,27 +10,27 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tasks")
-public class TskController {
-    private final TskRepo tskRepo;
+public class TaskController {
+    private final TaskRepository tskRepo;
 
-    public TskController(TskRepo tskRepo){
+    public TaskController(TaskRepository tskRepo){
         this.tskRepo=tskRepo;
     }
     @GetMapping("")
-    List<Taskk> findAll(){
+    List<TaskClass> findAll(){
         return tskRepo.findAll();
     }
 
     @GetMapping("/{id}")
-    Taskk findById(@PathVariable Integer id){
-        Optional<Taskk> task = tskRepo.findById(id);
+    TaskClass findById(@PathVariable Integer id){
+        Optional<TaskClass> task = tskRepo.findById(id);
         if (task.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return task.get();
     }
 
-    void create(@RequestBody Taskk task){
+    void create(@RequestBody TaskClass task){
         tskRepo.create(task);
     }
 

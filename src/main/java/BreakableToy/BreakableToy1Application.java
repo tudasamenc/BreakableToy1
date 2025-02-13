@@ -1,14 +1,13 @@
-package com.example.demo;
+package BreakableToy;
 
 
-import com.example.demo.Task.Taskk;
+import BreakableToy.Task.TaskClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.config.Task;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +24,7 @@ public class BreakableToy1Application {
 	@Bean
 	CommandLineRunner runner(){
 		return args -> {
-			Taskk task = new Taskk(1,"Tarea 1",false,2, LocalDateTime.now());
+			TaskClass task = new TaskClass(1,"Tarea 1",false,2, LocalDateTime.now());
 			log.info("Task: "+ task);
 		};
 	}

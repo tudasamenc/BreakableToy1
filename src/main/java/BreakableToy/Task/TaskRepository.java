@@ -1,4 +1,4 @@
-package com.example.demo.Task;
+package BreakableToy.Task;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
@@ -8,26 +8,26 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TskRepo {
-    private List<Taskk> tasks = new ArrayList<>();
+public class TaskRepository {
+    private List<TaskClass> tasks = new ArrayList<>();
 
-    List<Taskk> findAll()
+    List<TaskClass> findAll()
     {
         return tasks;
     }
 
-    Optional<Taskk> findById(Integer id){
+    Optional<TaskClass> findById(Integer id){
         return tasks.stream()
                 .filter(taskk -> taskk.id() == id)
                 .findFirst();
     }
 
-    void create(Taskk task){
+    void create(TaskClass task){
         tasks.add(task);
     }
     @PostConstruct
     private void init(){
-        tasks.add(new Taskk(1,"Uno",false,1, LocalDateTime.now()));
-        tasks.add(new Taskk(2,"dos",false,2, LocalDateTime.now()));
+        tasks.add(new TaskClass(1,"Uno",false,1, LocalDateTime.now()));
+        tasks.add(new TaskClass(2,"dos",false,2, LocalDateTime.now()));
     }
 }
