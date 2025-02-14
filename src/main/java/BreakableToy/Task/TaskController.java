@@ -11,27 +11,40 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
-    private final TaskRepository tskRepo;
+    private final TaskRepository taskRepo;
 
     public TaskController(TaskRepository tskRepo){
-        this.tskRepo=tskRepo;
+        this.taskRepo=tskRepo;
     }
     @GetMapping("")
     List<TaskClass> findAll(){
-        return tskRepo.findAll();
+        return taskRepo.findAll();
     }
 
     @GetMapping("/{id}")
     TaskClass findById(@PathVariable Integer id){
-        Optional<TaskClass> task = tskRepo.findById(id);
+        Optional<TaskClass> task = taskRepo.findById(id);
         if (task.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return task.get();
     }
-
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
     void create(@RequestBody TaskClass task){
-        tskRepo.create(task);
+        taskRepo.create(task);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    void update(@RequestBody TaskClass task, @PathVariable Integer id){
+        taskRepo.update(task,id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable Integer id){
+        taskRepo.delete(id);
     }
 
     @GetMapping("/hello")
