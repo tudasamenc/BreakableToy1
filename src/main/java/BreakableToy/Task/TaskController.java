@@ -29,7 +29,8 @@ public class TaskController {
         }
         return task.get();
     }
-
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
     void create(@RequestBody TaskClass task){
         tskRepo.create(task);
     }
