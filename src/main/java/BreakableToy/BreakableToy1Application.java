@@ -24,7 +24,7 @@ public class BreakableToy1Application {
 	@Bean
 	CommandLineRunner runner(){
 		return args -> {
-			TaskClass task = new TaskClass(1,"Tarea 1",false,2, LocalDateTime.now());
+			TaskClass task = new TaskClass(1,"Tarea 1",false,2, LocalDateTime.now(),null);
 			log.info("Task: "+ task);
 		};
 	}

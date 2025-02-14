@@ -40,7 +40,7 @@ public class TaskRepository {
 
     @PostConstruct
     private void init(){
-        tasks.add(new TaskClass(1,"Uno",false,1, LocalDateTime.now()));
-        tasks.add(new TaskClass(2,"dos",false,2, LocalDateTime.now()));
+        tasks.add(new TaskClass(1,"Uno",false,1, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new TaskClass(2,"dos",false,2, LocalDateTime.now(),LocalDateTime.now()));
     }
 }

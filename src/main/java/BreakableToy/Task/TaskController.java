@@ -25,7 +25,7 @@ public class TaskController {
     TaskClass findById(@PathVariable Integer id){
         Optional<TaskClass> task = taskRepo.findById(id);
         if (task.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new TaskNotFoundException();
         }
         return task.get();
     }

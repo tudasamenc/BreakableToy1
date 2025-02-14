@@ -6,6 +6,7 @@ public record TaskClass(
         String Name,
         boolean Done,
         Integer priority,
-        LocalDateTime dueDate
+        LocalDateTime dueDate,
+        LocalDateTime doneDate
 ) {
 }
