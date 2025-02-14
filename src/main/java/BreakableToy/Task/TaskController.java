@@ -29,6 +29,16 @@ public class TaskController {
         }
         return task.get();
     }
+
+    @GetMapping("/true")
+    List<TaskClass> findAllByDone(){
+            return taskRepo.findAllByDone(true);
+    }
+    @GetMapping("/false")
+    List<TaskClass> findAllByNotDone(){
+        return taskRepo.findAllByDone(false);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     void create(@RequestBody TaskClass task){
