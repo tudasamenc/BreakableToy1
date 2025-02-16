@@ -1,4 +1,5 @@
 package BreakableToy.Task;
+import com.sun.source.util.TaskListener;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,8 @@ public class TaskRepository {
     {
         return tasks;
     }
+    
+    
     //Find all tasks that are done
     List<TaskClass> findAllByDone(boolean done) {
         return tasks.stream()
@@ -28,7 +31,7 @@ public class TaskRepository {
 
     List<TaskClass> findAllByPriority(Integer priority){
         return tasks.stream()
-                .filter(task -> task.priority() == priority)
+                .filter(task -> task.priority().equals(priority))
                 .toList();
     }
 
@@ -42,6 +45,16 @@ public class TaskRepository {
         return tasks.stream()
                 .filter(task -> task.id() == id)
                 .findFirst();
+    }
+
+    Optional<TaskClass> SetDone(Integer id, boolean done) {
+        Optional<TaskClass> taskOpt = findById(id);
+        taskOpt.ifPresent(task -> {
+            TaskClass updatedTask = new TaskClass(task.id(), task.Name(), done, task.priority(), task.dueDate(),
+                    done ? LocalDateTime.now() : null);
+            tasks.set(tasks.indexOf(task), updatedTask);
+        });
+        return taskOpt;
     }
 
     void create(TaskClass task){

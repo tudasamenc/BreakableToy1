@@ -30,6 +30,13 @@ public class TaskController {
         return task.get();
     }
 
+
+
+    @GetMapping("priority/{p}")
+    List<TaskClass> findAllByPriority(@PathVariable Integer p){
+        return taskRepo.findAllByPriority(p);
+    }
+
     @GetMapping("/true")
     List<TaskClass> findAllByDone(){
             return taskRepo.findAllByDone(true);
