@@ -8,6 +8,7 @@ import java.util.Optional;
 
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/tasks")
 public class TaskController {
     private final TaskRepository taskRepo;
@@ -16,50 +17,53 @@ public class TaskController {
         this.taskRepo=tskRepo;
     }
     @GetMapping("")
-    List<TaskClass> findAll(){
+    List<Task> findAll(){
         return taskRepo.findAll();
     }
 
 
     @GetMapping("/{id}")
-    TaskClass findById(@PathVariable Integer id){
-        Optional<TaskClass> task = taskRepo.findById(id);
+    Task findById(@PathVariable Integer id){
+        Optional<Task> task = taskRepo.findById(id);
         if (task.isEmpty()){
             throw new TaskNotFoundException();
         }
         return task.get();
     }
 
+    @GetMapping("/find/{name}.{priorityString}.{doneString}/")
+    List<Task> findAllByMasked(@PathVariable String name, @PathVariable String priorityString, @PathVariable String doneString){
+        boolean P,D,N,done2;
+        int priority,done;
 
+        if(priorityString.equals(" ")){priority=1;}
+        else{priority=Integer.parseInt(priorityString);}
 
-    @GetMapping("priority/{p}")
-    List<TaskClass> findAllByPriority(@PathVariable Integer p){
-        return taskRepo.findAllByPriority(p);
+        if(doneString.equals(" ")){done=1;}
+        else{done=Integer.parseInt(doneString);}
+
+        N=name.equals(" ");
+        P=priorityString.equals(" ");
+        D=doneString.equals(" ");
+        done2=done==1;
+        return taskRepo.findAllMasked(P,priority,D,done2,N,name);
     }
 
-    @GetMapping("/true")
-    List<TaskClass> findAllByDone(){
-            return taskRepo.findAllByDone(true);
-    }
-    @GetMapping("/false")
-    List<TaskClass> findAllByNotDone(){
-        return taskRepo.findAllByDone(false);
-    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    void create(@RequestBody TaskClass task){
+    void create(@RequestBody Task task){
         taskRepo.create(task);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}")
-    void update(@RequestBody TaskClass task, @PathVariable Integer id){
+    @PutMapping("/update/{id}")
+    void update(@RequestBody Task task, @PathVariable Integer id){
         taskRepo.update(task,id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     void delete(@PathVariable Integer id){
         taskRepo.delete(id);
     }

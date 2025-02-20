@@ -1,7 +1,7 @@
 package BreakableToy;
 
 
-import BreakableToy.Task.TaskClass;
+import BreakableToy.Task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -24,7 +24,7 @@ public class BreakableToy1Application {
 	@Bean
 	CommandLineRunner runner(){
 		return args -> {
-			TaskClass task = new TaskClass(1,"Tarea 1",false,2, LocalDateTime.now(),null);
+			Task task = new Task(1,"Tarea 1",false,2, LocalDateTime.now(),null);
 			log.info("Task: "+ task);
 		};
 	}

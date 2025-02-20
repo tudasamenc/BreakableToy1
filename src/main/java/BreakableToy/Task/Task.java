@@ -1,7 +1,7 @@
 package BreakableToy.Task;
 import java.time.LocalDateTime;
 
-public record TaskClass(
+public record Task(
         Integer id,
         String Name,
         boolean Done,

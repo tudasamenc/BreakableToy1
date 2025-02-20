@@ -1,5 +1,4 @@
 package BreakableToy.Task;
-import com.sun.source.util.TaskListener;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
@@ -12,57 +11,66 @@ import java.util.Optional;
 @Repository
 public class TaskRepository {
 
-    private List<TaskClass> tasks = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
 
     //Find every task ad show it
-    List<TaskClass> findAll()
+    List<Task> findAll()
     {
         return tasks;
     }
     
     
     //Find all tasks that are done
-    List<TaskClass> findAllByDone(boolean done) {
+    List<Task> findAllByDone(boolean done) {
         return tasks.stream()
                 .filter(task -> task.Done() == done)
                 .toList();
     }
 
 
-    List<TaskClass> findAllByPriority(Integer priority){
+    List<Task> findAllByPriority(Integer priority){
         return tasks.stream()
                 .filter(task -> task.priority().equals(priority))
                 .toList();
     }
 
-    List<TaskClass> sortByPriority() {
+
+    List<Task> findAllMasked(boolean P, Integer priority, boolean D, boolean done, boolean N, String name){
         return tasks.stream()
-                .sorted(Comparator.comparingInt(TaskClass::priority))
+                .filter(task -> P||task.priority().equals(priority))
+                .filter(task -> D||task.Done() == done)
+                .filter(task -> N||task.Name().contains(name))
                 .toList();
     }
 
-    Optional<TaskClass> findById(Integer id){
+    List<Task> sortByPriority() {
+        return tasks.stream()
+                .sorted(Comparator.comparingInt(Task::priority))
+                .toList();
+    }
+
+    Optional<Task> findById(Integer id){
         return tasks.stream()
                 .filter(task -> task.id() == id)
                 .findFirst();
     }
 
-    Optional<TaskClass> SetDone(Integer id, boolean done) {
-        Optional<TaskClass> taskOpt = findById(id);
+    Optional<Task> SetDone(Integer id, boolean done) {
+        Optional<Task> taskOpt = findById(id);
         taskOpt.ifPresent(task -> {
-            TaskClass updatedTask = new TaskClass(task.id(), task.Name(), done, task.priority(), task.dueDate(),
+            Task updatedTask = new Task(task.id(), task.Name(), done, task.priority(), task.dueDate(),
                     done ? LocalDateTime.now() : null);
             tasks.set(tasks.indexOf(task), updatedTask);
         });
         return taskOpt;
     }
 
-    void create(TaskClass task){
+    void create(Task task){
         tasks.add(task);
     }
 
-    void update(TaskClass task, Integer id){
-        Optional<TaskClass> existingTask = findById(id);
+    void update(Task task, Integer id){
+        Optional<Task> existingTask = findById(id);
         if(existingTask.isPresent()){
             tasks.set(tasks.indexOf(existingTask.get()),task);
         }
@@ -75,17 +83,17 @@ public class TaskRepository {
 
     @PostConstruct
     private void init(){
-        tasks.add(new TaskClass(1,"Tarea Uno",false,1, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(2,"Tarea Dos",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(3,"Tarea Tres",false,3, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(4,"Tarea Cuatro",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(5,"Tarea Cinco",false,1, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(6,"Tarea Seis",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(7,"Tarea Siete",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(8,"Tarea Ocho",false,3, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(9,"Tarea Nueve",false,1, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(10,"Tarea Diez",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new TaskClass(11,"Tarea Once",false,1, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(1,"Tarea Uno",false,1, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(2,"Tarea Dos",false,2, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(3,"Tarea Tres",false,3, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(4,"Tarea Cuatro",false,2, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(5,"Tarea Cinco",false,1, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(6,"Tarea Seis",false,2, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(7,"Tarea Siete",true,2, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(8,"Tarea Ocho",false,3, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(9,"Tarea Nueve",false,1, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(10,"Tarea Diez",false,2, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(11,"Tarea Once",false,1, LocalDateTime.now(),LocalDateTime.now()));
 
     }
 }
