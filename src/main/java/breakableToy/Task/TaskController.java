@@ -1,4 +1,4 @@
-package BreakableToy.Task;
+package breakableToy.Task;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +53,10 @@ public class TaskController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     void create(@RequestBody Task task){
-        taskRepo.create(task);
+        int s = taskRepo.size();
+        int id = taskRepo.findElementAt(s-1).id()+1;
+        Task tasknewid= new Task(id,task.name(), task.done(), task.priority(), task.dueDate(),task.doneDate());
+        taskRepo.create(tasknewid);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

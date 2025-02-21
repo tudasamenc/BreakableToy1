@@ -1,7 +1,5 @@
-package BreakableToy;
-
-
-import BreakableToy.Task.Task;
+package breakableToy;
+import breakableToy.Task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -18,8 +16,6 @@ public class BreakableToy1Application {
 	public static void main(String[] args) {
 
 		SpringApplication.run(BreakableToy1Application.class, args);
-		//log.info("Application started successfully!");
-		//LinkedList<ToDo> tasks = new LinkedList<>();
 	}
 	@Bean
 	CommandLineRunner runner(){
