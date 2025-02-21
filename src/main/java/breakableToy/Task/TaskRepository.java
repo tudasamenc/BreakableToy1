@@ -1,4 +1,4 @@
-package BreakableToy.Task;
+package breakableToy.Task;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
@@ -23,8 +23,15 @@ public class TaskRepository {
     //Find all tasks that are done
     List<Task> findAllByDone(boolean done) {
         return tasks.stream()
-                .filter(task -> task.Done() == done)
+                .filter(task -> task.done() == done)
                 .toList();
+    }
+    int size() {
+        return tasks.size();
+    }
+
+    Task findElementAt(int i){
+        return tasks.get(i);
     }
 
 
@@ -38,8 +45,8 @@ public class TaskRepository {
     List<Task> findAllMasked(boolean P, Integer priority, boolean D, boolean done, boolean N, String name){
         return tasks.stream()
                 .filter(task -> P||task.priority().equals(priority))
-                .filter(task -> D||task.Done() == done)
-                .filter(task -> N||task.Name().contains(name))
+                .filter(task -> D||task.done() == done)
+                .filter(task -> N||task.name().contains(name))
                 .toList();
     }
 
@@ -55,10 +62,10 @@ public class TaskRepository {
                 .findFirst();
     }
 
-    Optional<Task> SetDone(Integer id, boolean done) {
+    Optional<Task> setDone(Integer id, boolean done) {
         Optional<Task> taskOpt = findById(id);
         taskOpt.ifPresent(task -> {
-            Task updatedTask = new Task(task.id(), task.Name(), done, task.priority(), task.dueDate(),
+            Task updatedTask = new Task(task.id(), task.name(), done, task.priority(), task.dueDate(),
                     done ? LocalDateTime.now() : null);
             tasks.set(tasks.indexOf(task), updatedTask);
         });

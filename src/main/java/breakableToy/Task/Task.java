@@ -1,10 +1,11 @@
-package BreakableToy.Task;
+package breakableToy.Task;
+
 import java.time.LocalDateTime;
 
 public record Task(
         Integer id,
-        String Name,
-        boolean Done,
+        String name,
+        boolean done,
         Integer priority,
         LocalDateTime dueDate,
         LocalDateTime doneDate
