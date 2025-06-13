@@ -55,7 +55,7 @@ public class TaskController {
     void create(@RequestBody Task task){
         int s = taskRepo.size();
         int id = taskRepo.findElementAt(s-1).id()+1;
-        Task tasknewid= new Task(id,task.name(), task.done(), task.priority(), task.dueDate(),task.doneDate());
+        Task tasknewid= new Task(id,task.name(), task.done(), task.priority(), task.dueDate(),task.doneDate(),task.creationDate());
         taskRepo.create(tasknewid);
     }
 

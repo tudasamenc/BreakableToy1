@@ -8,6 +8,7 @@ public record Task(
         boolean done,
         Integer priority,
         LocalDateTime dueDate,
-        LocalDateTime doneDate
+        LocalDateTime doneDate,
+        LocalDateTime creationDate
 ) {
 }

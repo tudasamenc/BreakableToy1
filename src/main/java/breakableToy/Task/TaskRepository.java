@@ -66,7 +66,7 @@ public class TaskRepository {
         Optional<Task> taskOpt = findById(id);
         taskOpt.ifPresent(task -> {
             Task updatedTask = new Task(task.id(), task.name(), done, task.priority(), task.dueDate(),
-                    done ? LocalDateTime.now() : null);
+                    done ? LocalDateTime.now() : null,task.creationDate());
             tasks.set(tasks.indexOf(task), updatedTask);
         });
         return taskOpt;
@@ -90,17 +90,18 @@ public class TaskRepository {
 
     @PostConstruct
     private void init(){
-        tasks.add(new Task(1,"Tarea Uno",false,1, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(2,"Tarea Dos",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(3,"Tarea Tres",false,3, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(4,"Tarea Cuatro",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(5,"Tarea Cinco",false,1, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(6,"Tarea Seis",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(7,"Tarea Siete",true,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(8,"Tarea Ocho",false,3, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(9,"Tarea Nueve",false,1, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(10,"Tarea Diez",false,2, LocalDateTime.now(),LocalDateTime.now()));
-        tasks.add(new Task(11,"Tarea Once",false,1, LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(1,"Tarea Uno",false,1, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(2,"Tarea Dos",false,2, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(3,"Tarea Tres",false,3, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(4,"Tarea Cuatro",false,2, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));;
+        tasks.add(new Task(5,"Tarea Cinco",false,1, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(6,"Tarea Seis",false,2, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(7,"Tarea Siete",true,2, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(8,"Tarea Ocho",false,3, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(9,"Tarea Nueve",false,1, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(10,"Tarea Diez",false,2, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+        tasks.add(new Task(11,"Tarea Once",false,1, LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now()));
+
 
     }
 }
