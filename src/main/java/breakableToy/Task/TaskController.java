@@ -11,68 +11,124 @@ import java.util.Optional;
 @CrossOrigin
 @RequestMapping("/api/tasks")
 public class TaskController {
+
     private final TaskRepository taskRepo;
 
-    public TaskController(TaskRepository tskRepo){
-        this.taskRepo=tskRepo;
+    public TaskController(TaskRepository tskRepo) {
+        this.taskRepo = tskRepo;
     }
+
+    // Return all tasks
     @GetMapping("")
-    List<Task> findAll(){
+    public List<Task> findAll() {
         return taskRepo.findAll();
     }
 
-
+    // Find by ID
     @GetMapping("/{id}")
-    Task findById(@PathVariable Integer id){
-        Optional<Task> task = taskRepo.findById(id);
-        if (task.isEmpty()){
-            throw new TaskNotFoundException();
-        }
-        return task.get();
+    public Task findById(@PathVariable Integer id) {
+        return taskRepo.findById(id)
+                .orElseThrow(TaskNotFoundException::new);
     }
 
-    @GetMapping("/find/{name}.{priorityString}.{doneString}/")
-    List<Task> findAllByMasked(@PathVariable String name, @PathVariable String priorityString, @PathVariable String doneString){
-        boolean P,D,N,done2;
-        int priority,done;
-
-        if(priorityString.equals(" ")){priority=1;}
-        else{priority=Integer.parseInt(priorityString);}
-
-        if(doneString.equals(" ")){done=1;}
-        else{done=Integer.parseInt(doneString);}
-
-        N=name.equals(" ");
-        P=priorityString.equals(" ");
-        D=doneString.equals(" ");
-        done2=done==1;
-        return taskRepo.findAllMasked(P,priority,D,done2,N,name);
+    // Filtered search
+    @GetMapping("/filter")
+    public List<Task> findFilteredTasks(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer priority,
+            @RequestParam(required = false) Boolean done
+    ) {
+        boolean N = (name == null);
+        boolean P = (priority == null);
+        boolean D = (done == null);
+        return taskRepo.findAllMasked(
+                P, priority != null ? priority : 1,
+                D, done != null ? done : false,
+                N, name != null ? name : ""
+        );
     }
 
+    // Paginated + sorted
+    @GetMapping("/paginated")
+    public List<Task> getPaginatedTasks(
+            @RequestParam(defaultValue = "") String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int sortvar,
+            @RequestParam(defaultValue = "true") boolean asc,
+            @RequestParam(defaultValue = "false") boolean filterDone,
+            @RequestParam(defaultValue = "false") boolean done,
+            @RequestParam(defaultValue = "false") boolean filterPriority,
+            @RequestParam(defaultValue = "3") int priority
+    ) {
+        boolean sortType=false;
+        boolean enablesort=false;
+        sortType = switch (sortvar) {
+            case 0 -> {
+                enablesort = false;
+                yield true;
+            }
+            case 1 -> {
+                enablesort = true;
+                yield true;
+            }
+            case 2 -> {
+                enablesort = true;
+                yield false;
+            }
+            default -> sortType;
+        };
+        return taskRepo.findSortedAndPaginated(enablesort && sortType,asc,enablesort && !sortType,asc,page, size,query,filterDone,done,filterPriority,priority);
+    }
 
+    // Create a task
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    void create(@RequestBody Task task){
+    public void create(@RequestBody Task task) {
         int s = taskRepo.size();
-        int id = taskRepo.findElementAt(s-1).id()+1;
-        Task tasknewid= new Task(id,task.name(), task.done(), task.priority(), task.dueDate(),task.doneDate(),task.creationDate());
-        taskRepo.create(tasknewid);
+        int id = taskRepo.findElementAt(s - 1).id() + 1;
+        Task taskWithId = new Task(
+                id,
+                task.name(),
+                task.done(),
+                task.priority(),
+                task.dueDate(),
+                task.doneDate(),
+                task.creationDate()
+        );
+        taskRepo.create(taskWithId);
     }
 
+    // Update task by ID
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/update/{id}")
-    void update(@RequestBody Task task, @PathVariable Integer id){
-        taskRepo.update(task,id);
+    public void update(@RequestBody Task task, @PathVariable Integer id) {
+        taskRepo.update(task, id);
     }
 
+    // Delete task by ID
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{id}")
-    void delete(@PathVariable Integer id){
+    public void delete(@PathVariable Integer id) {
         taskRepo.delete(id);
     }
 
+    // Set done status
+    @PatchMapping("/done/{id}")
+    public Task setDone(@PathVariable Integer id, @RequestParam boolean done) {
+        return taskRepo.setDone(id, done)
+                .orElseThrow(TaskNotFoundException::new);
+    }
+
+    // Count tasks
+    @GetMapping("/count")
+    public int getTaskCount() {
+        return taskRepo.size();
+    }
+
+    // Test endpoint
     @GetMapping("/hello")
-    String home(){
+    public String home() {
         return "Hello world";
     }
 }

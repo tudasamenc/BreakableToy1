@@ -20,8 +20,6 @@ public class BreakableToy1Application {
 	@Bean
 	CommandLineRunner runner(){
 		return args -> {
-			Task task = new Task(1,"Tarea 1",false,2, LocalDateTime.now(),null);
-			log.info("Task: "+ task);
 		};
 	}
 }
