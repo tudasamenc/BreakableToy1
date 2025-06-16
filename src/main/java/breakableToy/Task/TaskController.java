@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 
+/**
+ * TaskController is a REST controller that manages operations on tasks, such as CRUD operations,
+ * filtering, pagination, and other task-specific actions. It utilizes TaskRepository for data access.
+ * This controller allows cross-origin requests and maps all endpoints under "/api/tasks".
+ */
 @RestController
 @CrossOrigin
 @RequestMapping("/api/tasks")
@@ -47,7 +52,10 @@ public class TaskController {
                 N, name != null ? name : ""
         );
     }
-
+    @GetMapping("/advice")
+    public String advice(@RequestParam(defaultValue = "0")int id) {
+        return taskRepo.adviceCall(id);
+    }
     // Paginated + sorted
     @GetMapping("/paginated")
     public List<Task> getPaginatedTasks(
@@ -61,24 +69,7 @@ public class TaskController {
             @RequestParam(defaultValue = "false") boolean filterPriority,
             @RequestParam(defaultValue = "3") int priority
     ) {
-        boolean sortType=false;
-        boolean enablesort=false;
-        sortType = switch (sortvar) {
-            case 0 -> {
-                enablesort = false;
-                yield true;
-            }
-            case 1 -> {
-                enablesort = true;
-                yield true;
-            }
-            case 2 -> {
-                enablesort = true;
-                yield false;
-            }
-            default -> sortType;
-        };
-        return taskRepo.findSortedAndPaginated(enablesort && sortType,asc,enablesort && !sortType,asc,page, size,query,filterDone,done,filterPriority,priority);
+        return taskRepo.findSortedAndPaginated(sortvar,asc,page, size,query,filterDone,done,filterPriority,priority);
     }
 
     // Create a task
@@ -114,8 +105,8 @@ public class TaskController {
     }
 
     // Set done status
-    @PatchMapping("/done/{id}")
-    public Task setDone(@PathVariable Integer id, @RequestParam boolean done) {
+    @PatchMapping("/done")
+    public Task setDone(@RequestParam Integer id, @RequestParam boolean done) {
         return taskRepo.setDone(id, done)
                 .orElseThrow(TaskNotFoundException::new);
     }
@@ -125,6 +116,12 @@ public class TaskController {
     public int getTaskCount() {
         return taskRepo.size();
     }
+
+    @GetMapping("/stats")
+    public TaskCompletionStats getCompletionStats() {
+        return taskRepo.calculateAverageCompletionTimes();
+    }
+
 
     // Test endpoint
     @GetMapping("/hello")

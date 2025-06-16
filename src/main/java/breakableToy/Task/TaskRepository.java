@@ -1,6 +1,7 @@
 package breakableToy.Task;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -8,10 +9,21 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Repository class for managing Task entities. Provides CRUD operations and additional 
+ * functionality for task management including searching, filtering, sorting and pagination.
+ *
+ * @Repository annotation indicates that this class is a Spring Data Repository
+ */
 @Repository
 public class TaskRepository {
 
     private final List<Task> tasks = new ArrayList<>();
+    private final ChatClient chatClient;
+
+    public TaskRepository(ChatClient.Builder chatClientBuilder) {
+        this.chatClient = chatClientBuilder.build();
+    }
 
     // Find every task
     List<Task> findAll() {
@@ -75,7 +87,18 @@ public class TaskRepository {
 
     void update(Task task, Integer id) {
         Optional<Task> existingTask = findById(id);
-        existingTask.ifPresent(value -> tasks.set(tasks.indexOf(value), task));
+        existingTask.ifPresent(existing -> {
+            Task updatedTask = new Task(
+                    id,
+                    task.name() != null ? task.name() : existing.name(),
+                    task.done(),
+                    task.priority() != null ? task.priority() : existing.priority(),
+                    task.dueDate() != null ? task.dueDate() : existing.dueDate(),
+                    task.doneDate() != null ? task.doneDate() : existing.doneDate(),
+                    task.creationDate() != null ? task.creationDate() : existing.creationDate()
+            );
+            tasks.set(tasks.indexOf(existing), updatedTask);
+        });
     }
 
     void delete(Integer id) {
@@ -121,12 +144,73 @@ public class TaskRepository {
                 .toList();
     }
 
+    public String adviceCall(int id){
+        String name = tasks.stream()
+                .filter(task -> task.id().equals(id))
+                .map(Task::name)
+                .findFirst()
+                .orElse(null);
+            System.out.println(name);
+
+        return this.chatClient.prompt()
+                .user("Give me a small list of steps I could follow to get this task done. Each step must have just a few words: "+name)
+                .call()
+                .content();
+    }
+
+    public TaskCompletionStats calculateAverageCompletionTimes() {
+        // Get all completed tasks with valid done dates
+        List<Task> completedTasks = tasks.stream()
+                .filter(Task::done)
+                .filter(task -> task.doneDate() != null && task.creationDate() != null)
+                .toList();
+
+        // Calculate overall average
+        double overallAverage = calculateAverageHours(completedTasks);
+
+        // Calculate averages per priority
+        double priority1Average = calculateAverageHours(filterByPriority(completedTasks, 1));
+        double priority2Average = calculateAverageHours(filterByPriority(completedTasks, 2));
+        double priority3Average = calculateAverageHours(filterByPriority(completedTasks, 3));
+
+        return new TaskCompletionStats(
+                overallAverage,
+                priority1Average,
+                priority2Average,
+                priority3Average
+        );
+    }
+
+    private double calculateAverageHours(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalHours = tasks.stream()
+                .mapToDouble(task -> {
+                    long hours = java.time.Duration.between(
+                            task.creationDate(),
+                            task.doneDate()
+                    ).toHours();
+                    return hours;
+                })
+                .sum();
+
+        return totalHours / tasks.size();
+    }
+
+    private List<Task> filterByPriority(List<Task> tasks, int priority) {
+        return tasks.stream()
+                .filter(task -> task.priority() == priority)
+                .toList();
+    }
+
+
+
     //  Combined sorting and pagination
     public List<Task> findSortedAndPaginated(
-            boolean sortByPriority,
-            boolean priorityAsc,
-            boolean sortByDone,
-            boolean doneAsc,
+            int sortType,           // 0: none, 1: priority, 2: done, 3: name, 4: due date
+            boolean asc,
             int page,
             int size,
             String search,
@@ -135,39 +219,56 @@ public class TaskRepository {
             boolean filterByPriorityEnabled,
             int priorityFilterValue
     ) {
-        List<Task> sorted = findSorted(sortByPriority, priorityAsc, sortByDone, doneAsc);
+        List<Task> tasks = findAll(); // You should replace this with your source of unsorted tasks
+
+        // Sort based on sortType
+        Comparator<Task> comparator = null;
+        switch (sortType) {
+            case 1 -> comparator = Comparator.comparing(Task::priority, Comparator.nullsLast(Integer::compareTo));
+            case 2 -> comparator = Comparator.comparing(Task::done);
+            case 3 -> comparator = Comparator.comparing(Task::name, Comparator.nullsLast(String::compareToIgnoreCase));
+            case 4 -> comparator = Comparator.comparing(Task::dueDate, Comparator.nullsLast(LocalDateTime::compareTo));
+        }
+
+        if (comparator != null) {
+            if (!asc) {
+                comparator = comparator.reversed();
+            }
+            tasks = tasks.stream().sorted(comparator).toList();
+        }
 
         // Filter by search string in "name"
         if (search != null && !search.isEmpty()) {
             String searchLower = search.toLowerCase();
-            sorted = sorted.stream()
+            tasks = tasks.stream()
                     .filter(task -> task.name() != null && task.name().toLowerCase().contains(searchLower))
                     .toList();
         }
 
         // Filter by done status if enabled
         if (filterByDoneEnabled) {
-            sorted = sorted.stream()
+            tasks = tasks.stream()
                     .filter(task -> task.done() == doneFilterValue)
                     .toList();
         }
 
         // Filter by priority if enabled
         if (filterByPriorityEnabled) {
-            sorted = sorted.stream()
+            tasks = tasks.stream()
                     .filter(task -> task.priority() != null && task.priority().equals(priorityFilterValue))
                     .toList();
         }
 
         // Pagination
         int fromIndex = page * size;
-        if (fromIndex >= sorted.size()) {
+        if (fromIndex >= tasks.size()) {
             return List.of();
         }
 
-        int toIndex = Math.min(fromIndex + size, sorted.size());
-        return sorted.subList(fromIndex, toIndex);
+        int toIndex = Math.min(fromIndex + size, tasks.size());
+        return tasks.subList(fromIndex, toIndex);
     }
+
 
     // Initial data
     @PostConstruct
