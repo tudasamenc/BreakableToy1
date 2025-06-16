@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -171,19 +172,81 @@ public class TaskRepository {
     // Initial data
     @PostConstruct
     private void init() {
-        tasks.add(new Task(1, "Tarea Uno", false, 1, now(), now(), now()));
-        tasks.add(new Task(2, "Tarea Dos", false, 2, now(), now(), now()));
-        tasks.add(new Task(3, "Tarea Tres", false, 3, now(), now(), now()));
-        tasks.add(new Task(4, "Tarea Cuatro", false, 2, now(), now(), now()));
-        tasks.add(new Task(5, "Tarea Cinco", false, 1, now(), now(), now()));
-        tasks.add(new Task(6, "Tarea Seis", false, 2, now(), now(), now()));
-        tasks.add(new Task(7, "Tarea Siete", true, 2, now(), now(), now()));
-        tasks.add(new Task(8, "Tarea Ocho", false, 3, now(), now(), now()));
-        tasks.add(new Task(9, "Tarea Nueve", false, 1, now(), now(), now()));
-        tasks.add(new Task(10, "Tarea Diez", false, 2, now(), now(), now()));
-        tasks.add(new Task(11, "Tarea Once", false, 1, now(), now(), now()));
-        tasks.add(new Task(12, "Tarea Doce", false, 2, now(), now(), now()));
-        tasks.add(new Task(13, "Tarea Trece", false, 3, now(), now(), now()));
+        tasks.add(new Task(1, "Buy groceries", true, 2,
+                LocalDateTime.of(2025, Month.JUNE, 25, 15, 0),
+                LocalDateTime.of(2025, Month.JUNE, 24, 10, 0),
+                LocalDateTime.of(2025, Month.MAY, 17, 9, 30)));
+
+        tasks.add(new Task(2, "Finish book chapter", false, 3,
+                LocalDateTime.of(2025, Month.JULY, 2, 20, 0),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 18, 14, 15)));
+
+        tasks.add(new Task(3, "Clean garage", true, 1,
+                LocalDateTime.of(2025, Month.JUNE, 29, 11, 0),
+                LocalDateTime.of(2025, Month.JUNE, 27, 16, 45),
+                LocalDateTime.of(2025, Month.MAY, 16, 11, 0)));
+
+        tasks.add(new Task(4, "Call the bank", false, 2,
+                LocalDateTime.of(2025, Month.JULY, 10, 13, 0),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 20, 10, 0)));
+
+        tasks.add(new Task(5, "Water the plants", true, 1,
+                LocalDateTime.of(2025, Month.JUNE, 23, 8, 0),
+                LocalDateTime.of(2025, Month.JUNE, 22, 7, 0),
+                LocalDateTime.of(2025, Month.MAY, 15, 7, 30)));
+
+        tasks.add(new Task(6, "Organize desk", false, 2,
+                LocalDateTime.of(2025, Month.JULY, 5, 17, 0),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 29, 17, 20)));
+
+        tasks.add(new Task(7, "Reply to emails", true, 3,
+                LocalDateTime.of(2025, Month.JUNE, 30, 9, 0),
+                LocalDateTime.of(2025, Month.JUNE, 29, 8, 30),
+                LocalDateTime.of(2025, Month.MAY, 31, 12, 0)));
+
+        tasks.add(new Task(8, "Pay electricity bill", false, 1,
+                LocalDateTime.of(2025, Month.JULY, 13, 23, 59),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 27, 18, 10)));
+
+        tasks.add(new Task(9, "Walk the dog", true, 2,
+                LocalDateTime.of(2025, Month.JUNE, 22, 6, 0),
+                LocalDateTime.of(2025, Month.JUNE, 21, 6, 15),
+                LocalDateTime.of(2025, Month.MAY, 21, 6, 0)));
+
+        tasks.add(new Task(10, "Prepare lunch", false, 3,
+                LocalDateTime.of(2025, Month.JUNE, 26, 13, 30),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 30, 11, 45)));
+
+        tasks.add(new Task(11, "Schedule dentist appointment", true, 2,
+                LocalDateTime.of(2025, Month.JULY, 3, 10, 0),
+                LocalDateTime.of(2025, Month.JUNE, 28, 10, 30),
+                LocalDateTime.of(2025, Month.MAY, 19, 9, 0)));
+
+        tasks.add(new Task(12, "Do laundry", false, 1,
+                LocalDateTime.of(2025, Month.JUNE, 21, 14, 0),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 22, 15, 10)));
+
+        tasks.add(new Task(13, "Backup computer", true, 3,
+                LocalDateTime.of(2025, Month.JULY, 6, 18, 0),
+                LocalDateTime.of(2025, Month.JULY, 1, 20, 0),
+                LocalDateTime.of(2025, Month.MAY, 25, 16, 45)));
+
+        tasks.add(new Task(14, "Plan weekend trip", false, 2,
+                LocalDateTime.of(2025, Month.JULY, 12, 8, 0),
+                null,
+                LocalDateTime.of(2025, Month.MAY, 23, 8, 30)));
+
+        tasks.add(new Task(15, "Refill prescriptions", true, 1,
+                LocalDateTime.of(2025, Month.JUNE, 28, 9, 0),
+                LocalDateTime.of(2025, Month.JUNE, 26, 10, 0),
+                LocalDateTime.of(2025, Month.MAY, 26, 10, 15)));
+
     }
 
     private LocalDateTime now() {
